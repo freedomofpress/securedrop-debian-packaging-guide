@@ -69,5 +69,5 @@ Releasing a project
 command as it will tell you what all files where put inside of the tar file. For
 any modification, update the ``MANIFEST.in`` file accordingly.
 
-The maintainer can then GPG sign and release the tarball in a pre-defined
+The maintainer can then sign and release the tarball in a pre-defined
 location.

@@ -7,7 +7,7 @@ Welcome to SecureDrop Debian Packaging Guide's documentation!
 =============================================================
 
 .. note:: This is a live documentation, means it will be changed regularly as we
-update the guide.
+          update the guide.
 
 
 .. toctree::
@@ -15,6 +15,7 @@ update the guide.
    :caption: Contents:
 
    pythondevels
+   debian101
 
 
 
