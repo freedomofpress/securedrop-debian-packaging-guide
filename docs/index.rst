@@ -16,6 +16,7 @@ Welcome to SecureDrop Debian Packaging Guide's documentation!
 
    pythondevels
    debian101
+   internalpackaging
 
 
 
