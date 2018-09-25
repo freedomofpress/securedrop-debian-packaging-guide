@@ -6,6 +6,18 @@ our example project, and we will also import the library inside of our source
 code.
 
 
+Install computepipfilehash tool
+--------------------------------
+
+::
+
+    $ pip3 install computepipfilehash --user -U
+
+
+The above command will install `computepipfilehash
+<https://github.com/kushaldas/computepipfilehash>`_ tool.
+
+
 Change the example code
 ------------------------
 
@@ -16,28 +28,29 @@ branch.
 
     cd ~/code/whosaysthat/
     git checkout fancyrelease
-    pipenv lock -r > requirements.txt
+    computepipfilehash > requirements-build.txt
 
-The final command above creates a ``requirements.txt`` file for the dependencies.
-Next, we should move into our development environment and create an empty directory,
+The final command above creates a ``requirements-build.txt`` file for the
+dependencies. We will use this file to build the wheels locally. Next, we should
+move into our development environment and create an empty directory.
 
 ::
 
     mkdir localwheels
-    pip3 wheel --no-binary :all: -w ./localwheels/ -r requirements.txt
+    pip3 wheel --require-hashes --no-binary :all: -w ./localwheels/ -r requirements-build.txt
 
 
 The above command will download the source tarballs from PyPI, and will try to
 build the wheels in the ``./localwheels/`` directory. But, this will fail as
 some development header files are missing. We should install all external C
-level dependencies from the Debian repository itself. After installing the packages,
-we should retry to build the wheels again.
+level dependencies from the Debian repository itself. After installing the
+packages, we should retry to build the wheels again.
 
 
 ::
 
     sudo apt-get install libssl-dev libffi-dev
-    pip3 wheel --no-binary :all: -w ./localwheels/ -r requirements.txt
+    pip3 wheel --require-hashes --no-binary :all: -w ./localwheels/ -r requirements.txt
     ls ./localwheels/
     asn1crypto-0.24.0-py3-none-any.whl
     certifi-2018.8.24-py2.py3-none-any.whl
@@ -49,6 +62,17 @@ we should retry to build the wheels again.
     requests-2.19.1-py2.py3-none-any.whl
     six-1.11.0-py2.py3-none-any.whl
     urllib3-1.23-py2.py3-none-any.whl
+
+
+Create the requirements.txt file for our wheels
+------------------------------------------------
+
+As the next step, we will create the final ``requirements.txt`` file which will contain the details
+of the wheels including the hashes.
+
+::
+
+    computepipfilehash --wheel-hashes > requirements.txt
 
 
 Sync the local wheels into a central storage
@@ -182,7 +206,7 @@ Export environment variables to use the local wheels
 
 ::
 
-    $ export DH_PIP_EXTRA_ARGS="--no-index --find-links=./localwheels"
+    $ export DH_PIP_EXTRA_ARGS="--require-hashes --no-index --find-links=./localwheels"
 
 This will make *dh-virtualenv* to use our wheels instead of downloading them from PyPI.
 
