@@ -136,7 +136,7 @@ Add the following text to the ``debian/control`` file.
     Architecture: all
     Depends: ${python3:Depends}, ${misc:Depends}
     Description: This is our example tool
-    This package installs the library for Python 3.
+     This package installs the library for Python 3.
 
 If we know any library we are dependent on (written in C), we should explicitly mention that in the
 ``Depends:`` line above.
