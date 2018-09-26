@@ -71,3 +71,5 @@ any modification, update the ``MANIFEST.in`` file accordingly.
 
 The maintainer can then sign and release the tarball in a pre-defined
 location.
+
+Remember to read the whole guide first before release any application for this workflow.
