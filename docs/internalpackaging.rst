@@ -223,6 +223,7 @@ Add the following text to the ``debian/rules`` file.
     %:
             dh $@ --with python-virtualenv --python /usr/bin/python3.5 --setuptools
 
+.. note:: If you copy paste the above example, then remember to use a TAB instead of 8 spaces :)
 
 Let us build the package
 -------------------------
