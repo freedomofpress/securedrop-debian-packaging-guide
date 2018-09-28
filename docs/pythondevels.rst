@@ -37,13 +37,29 @@ Use Pipenv for development environment setup
 Use `pipenv <https://pipenv.readthedocs.io/en/latest/>`_ tool to maintain your
 project's dependencies.
 
-MANIFEST.in file
------------------
+For building the final Debian packages, we need every Python dependency to be installable
+from the PyPI from source. We need this so that we can track the sha265sums of the source
+tarballs.
 
-All of the files which should be installed into the end user system, should be
-mentioned in the ``MANIFEST.in`` file. `Here
-<https://github.com/kushaldas/whosaysthat/blob/master/MANIFEST.in>`_ is one
-example of our example project.
+Do not add any of the following dependencies in *Pipfile*, use Debian packages
+from Debian.
+
+- PyQt5
+
+Create the virtualenv using the following command
+
+::
+
+    $ pipenv install -d --site-packages
+
+
+Debian package names for dependencies
+--------------------------------------
+
+Use the following for PyQy5
+
+- python3-pyqt5
+- python3-pyqt5.qtsvg
 
 
 Writing your setup.py
@@ -54,12 +70,25 @@ you want to know about all the available options, `this guide
 <https://packaging.python.org/guides/distributing-packages-using-setuptools/>`_
 will help you to find the details.
 
+You can start from this `example setup.py <https://github.com/kushaldas/whosaysthat/blob/master/setup.py>_`.
+
 - Follow `semver guide <https://semver.org/>`_ for the version number of the project.
 - Add a correct LICENSE file in the project repository.
 - All command line tools should be marked clearly as `console entry points <https://packaging.python.org/guides/distributing-packages-using-setuptools/#entry-points>`_
 - Add a ``__main__.py`` as required in the package/module so that it can be invoked as ``python3 -m modulename``.
 - Remember that ``pipenv install -e .`` will enable the console scripts while you are developing the application.
 - Do not install or copy any configuration file or other data using setup.py, we will use Debian package for the same.
+
+
+MANIFEST.in file
+-----------------
+
+All of the files which should be installed into the end user system, should be
+mentioned in the ``MANIFEST.in`` file. `Here
+<https://github.com/kushaldas/whosaysthat/blob/master/MANIFEST.in>`_ is one
+example of our example project.
+
+Remember to add `requirements-build.txt` and `requirement.txt` to the manifest file.
 
 Releasing a project
 -------------------

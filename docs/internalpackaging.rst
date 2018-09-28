@@ -93,10 +93,10 @@ Then, we will create a new source tarball for our project and also copy the whee
     
     python3 setup.py sdist
     cp dist/whosaysthat-0.0.2.tar.gz ~/packaging/
-    cp -r localwheels ~/packaging/
     cd ~/packaging/
     tar -xvf whosaysthat-0.0.2.tar.gz
     cd whosaysthat-0.0.2/
+    cp -r ~/code/whosaysthat/localwheels .
 
 
 Now, we will create the files required for our packaging manually, including the
@@ -173,6 +173,8 @@ the entry there.
 This will open up your favorite editor, update and save the file.
 
 
+.. note:: You will have to install `devscripts` package in Debian for the `dch` command.
+
 Create the install file
 -----------------------
 
@@ -224,6 +226,22 @@ Add the following text to the ``debian/rules`` file.
             dh $@ --with python-virtualenv --python /usr/bin/python3.5 --setuptools
 
 .. note:: If you copy paste the above example, then remember to use a TAB instead of 8 spaces :)
+
+
+Remember, for a package with dependent system `site-packages`, means packages which depends on
+Python modules from Debian world, the above will need modification.
+
+::
+
+    #!/usr/bin/make -f
+
+    %:
+        dh $@ --with python-virtualenv
+
+    override_dh_virtualenv:
+        dh_virtualenv --python /usr/bin/python3.5 --setuptools -S
+
+
 
 Let us build the package
 -------------------------
