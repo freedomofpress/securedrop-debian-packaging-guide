@@ -5,6 +5,16 @@ In this chapter we will package our example project into a Debian package and
 learn about the process and different tools and files involved.
 
 
+Install the required package build tools
+-----------------------------------------
+
+We will need the required build tools in the system.
+
+::
+
+    $ sudo apt-get install build-essential devscripts dh-python python3-all python3-setuptools dh-make
+
+
 Get the source tarball
 -----------------------
 
@@ -75,7 +85,6 @@ As you can see, the final output of the above command is a tarball inside of the
 ``dist/`` directory.
 
 
-
 Working directory for the packaging
 ------------------------------------
 
@@ -83,16 +92,6 @@ We will use the the ``~/packaging/`` as the working directory to build all the
 packages. Create this directory in your system.
 
 .. warning:: Do not build any package as root user.
-
-
-Install the required package build tools
------------------------------------------
-
-We will need the required build tools in the system.
-
-::
-
-    $ sudo apt-get install build-essential devscripts dh-python python3-all python3-setuptools dh-make
 
 
 Install the build dependencies of the package itself
@@ -114,7 +113,7 @@ Extracting our source tarball
 
     $ cp dist/whosaysthat-0.0.1.tar.gz ~/packaging
     $ cd ~/packaging
-    $ $ tar -xvf whosaysthat-0.0.1.tar.gz 
+    $ $ tar -xvf whosaysthat-0.0.1.tar.gz
     whosaysthat-0.0.1/
     whosaysthat-0.0.1/setup.py
     whosaysthat-0.0.1/configs/
@@ -163,7 +162,7 @@ Create the initial packaging file
 
 ::
 
-    $ dh_make -f ../whosaysthat-0.0.1.tar.gz 
+    $ dh_make -f ../whosaysthat-0.0.1.tar.gz
     Type of package: (single, indep, library, python)
     [s/i/l/p]?
     Email-Address       : kushal@freedom.press
@@ -260,10 +259,10 @@ This is a *must have* file for the package. Below is an example. #1234 is the
 release ticket in our project's github.
 
 ::
-    
+
     whosaysthat (0.0.1-1) unstable; urgency=medium
 
-    * Initial release (Closes: #1234)  
+    * Initial release (Closes: #1234)
 
     -- Kushal Das <kushal@freedom.press>  Mon, 17 Sep 2018 19:51:02 -0400
 
