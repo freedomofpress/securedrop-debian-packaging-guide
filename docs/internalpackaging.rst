@@ -15,7 +15,8 @@ Install computepipfilehash tool
 
 
 The above command will install `computepipfilehash
-<https://github.com/kushaldas/computepipfilehash>`_ tool.
+<https://github.com/kushaldas/computepipfilehash>`_ tool. Use ``0.0.2``
+version for this guide.
 
 
 Change the example code
@@ -34,23 +35,44 @@ The final command above creates a ``requirements-build.txt`` file for the
 dependencies. We will use this file to build the wheels locally. Next, we should
 move into our development environment and create an empty directory.
 
+.. note:: We will sync source tarballs and binary wheels to the localwheels directory here.
+
+Next, we will download missing source tarballs from PyPI.
+
 ::
 
     mkdir localwheels
-    pip3 wheel --require-hashes --no-binary :all: -w ./localwheels/ -r requirements-build.txt
+    sd-downloadsources
 
 
-The above command will download the source tarballs from PyPI, and will try to
-build the wheels in the ``./localwheels/`` directory. But, this will fail as
-some development header files are missing. We should install all external C
-level dependencies from the Debian repository itself. After installing the
-packages, we should retry to build the wheels again.
+Then, update the ``requirements-build.txt`` file with the hashes from the existing wheels.
+
+::
+
+    computepipfilehash --update-hashes
+
+
+Finally, we can build the missing binary wheels from the sources.
+
+::
+
+    sd-buildwheels
+
+
+
+The above command will build the wheels in the ``./localwheels/`` directory.
+But, this will fail as some development header files are missing. We should
+install all external C level dependencies from the Debian repository itself.
+After installing the packages, we should retry to build the wheels again.
+
+.. note:: Remember to commit the ``requirements-build.txt`` file to the git repo. This
+          will help others to build using the same source tarballs.
 
 
 ::
 
     sudo apt-get install libssl-dev libffi-dev
-    pip3 wheel --require-hashes --no-binary :all: -w ./localwheels/ -r requirements.txt
+    sd-buildwheels
     ls ./localwheels/
     asn1crypto-0.24.0-py3-none-any.whl
     certifi-2018.8.24-py2.py3-none-any.whl
