@@ -73,7 +73,7 @@ After installing the packages, we should retry to build the wheels again.
 ::
 
     sudo apt-get install libssl-dev libffi-dev
-    sd-buildwheels
+    pip3 wheel --no-index --find-links ./localwheels/ -w ./localwheels/ -r requirements-build.txt
     ls ./localwheels/
     asn1crypto-0.24.0-py3-none-any.whl
     certifi-2018.8.24-py2.py3-none-any.whl
