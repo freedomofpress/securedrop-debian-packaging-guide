@@ -43,7 +43,7 @@ Next, we will download missing source tarballs from PyPI.
 ::
 
     mkdir localwheels
-    sd-downloadsources
+    pip3 download --no-binary :all: -d ./localwheels/ -r requirements-build.txt
 
 
 Then, update the ``requirements-build.txt`` file with the hashes from the existing wheels.
@@ -57,7 +57,7 @@ Finally, we can build the missing binary wheels from the sources.
 
 ::
 
-    sd-buildwheels
+    pip3 wheel --no-index --find-links ./localwheels/ -w ./localwheels/ -r requirements-build.txt
 
 
 
@@ -113,7 +113,7 @@ Then, we will create a new source tarball for our project and also copy the whee
 
 ::
 
-    
+
     python3 setup.py sdist
     cp dist/whosaysthat-0.0.2.tar.gz ~/packaging/
     cd ~/packaging/
