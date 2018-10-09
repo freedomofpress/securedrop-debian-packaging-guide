@@ -23,7 +23,8 @@ Change the example code
 ------------------------
 
 First, we will move into the source directory and checkout a different
-branch.
+branch. Ensure that ``Pipfile.lock`` exists in the current working directory
+and then:
 
 ::
 
