@@ -23,7 +23,8 @@ Change the example code
 ------------------------
 
 First, we will move into the source directory and checkout a different
-branch.
+branch. Ensure that ``Pipfile.lock`` exists in the current working directory
+and then:
 
 ::
 
@@ -42,7 +43,7 @@ Next, we will download missing source tarballs from PyPI.
 ::
 
     mkdir localwheels
-    sd-downloadsources
+    pip3 download --no-binary :all: -d ./localwheels/ -r requirements-build.txt
 
 
 Then, update the ``requirements-build.txt`` file with the hashes from the existing wheels.
@@ -56,7 +57,7 @@ Finally, we can build the missing binary wheels from the sources.
 
 ::
 
-    sd-buildwheels
+    pip3 wheel --no-index --find-links ./localwheels/ -w ./localwheels/ -r requirements-build.txt
 
 
 
@@ -72,7 +73,7 @@ After installing the packages, we should retry to build the wheels again.
 ::
 
     sudo apt-get install libssl-dev libffi-dev
-    sd-buildwheels
+    pip3 wheel --no-index --find-links ./localwheels/ -w ./localwheels/ -r requirements-build.txt
     ls ./localwheels/
     asn1crypto-0.24.0-py3-none-any.whl
     certifi-2018.8.24-py2.py3-none-any.whl
@@ -112,7 +113,7 @@ Then, we will create a new source tarball for our project and also copy the whee
 
 ::
 
-    
+
     python3 setup.py sdist
     cp dist/whosaysthat-0.0.2.tar.gz ~/packaging/
     cd ~/packaging/
