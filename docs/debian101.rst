@@ -243,7 +243,8 @@ Import points to remember for this file.
 
 - Double check the Build-Depends lines
 - Add all the Debian packages this package is depending on the ``Depends`` line
-
+- Please make sure to add all the native libraries this package is dependent on
+are in the ``Depends`` line.
 
 Editing the copyright file
 ---------------------------
