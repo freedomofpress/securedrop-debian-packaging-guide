@@ -15,7 +15,7 @@ Install computepipfilehash tool
 
 
 The above command will install `computepipfilehash
-<https://github.com/kushaldas/computepipfilehash>`_ tool. Use ``0.0.2``
+<https://github.com/kushaldas/computepipfilehash>`_ tool. Use ``0.0.3``
 version for this guide.
 
 
@@ -59,6 +59,11 @@ Finally, we can build the missing binary wheels from the sources.
 
     pip3 wheel --no-index --find-links ./localwheels/ -w ./localwheels/ -r requirements-build.txt
 
+
+.. note:: The `python-dateutil` package is an exception as it we have to build the wheel manually first. This is
+          because the way the `setup.py` of the said project works.
+
+          ``pip3 install wheel`` and then ``pip3 wheel localwheels/python-dateutil-2.7.5.tar.gz``
 
 
 The above command will build the wheels in the ``./localwheels/`` directory.
