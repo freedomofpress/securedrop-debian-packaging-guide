@@ -6,18 +6,6 @@ our example project, and we will also import the library inside of our source
 code.
 
 
-Install computepipfilehash tool
---------------------------------
-
-::
-
-    $ pip3 install computepipfilehash --user -U
-
-
-The above command will install `computepipfilehash
-<https://github.com/kushaldas/computepipfilehash>`_ tool. Use ``0.0.3``
-version for this guide.
-
 
 Change the example code
 ------------------------
@@ -30,84 +18,7 @@ and then:
 
     cd ~/code/whosaysthat/
     git checkout fancyrelease
-    computepipfilehash > requirements-build.txt
-
-The final command above creates a ``requirements-build.txt`` file for the
-dependencies. We will use this file to build the wheels locally. Next, we should
-move into our development environment and create an empty directory.
-
-.. note:: We will sync source tarballs and binary wheels to the localwheels directory here.
-
-Next, we will download missing source tarballs from PyPI.
-
-::
-
-    mkdir localwheels
-    pip3 download --no-binary :all: -d ./localwheels/ -r requirements-build.txt
-
-
-Then, update the ``requirements-build.txt`` file with the hashes from the existing wheels.
-
-::
-
-    computepipfilehash --update-hashes
-
-
-Finally, we can build the missing binary wheels from the sources.
-
-::
-
-    pip3 wheel --no-index --find-links ./localwheels/ -w ./localwheels/ -r requirements-build.txt
-
-
-.. note:: The `python-dateutil` package is an exception as it we have to build the wheel manually first. This is
-          because the way the `setup.py` of the said project works.
-
-          ``pip3 install wheel`` and then ``pip3 wheel localwheels/python-dateutil-2.7.5.tar.gz``
-
-
-The above command will build the wheels in the ``./localwheels/`` directory.
-But, this will fail as some development header files are missing. We should
-install all external C level dependencies from the Debian repository itself.
-After installing the packages, we should retry to build the wheels again.
-
-.. note:: Remember to commit the ``requirements-build.txt`` file to the git repo. This
-          will help others to build using the same source tarballs.
-
-
-::
-
-    sudo apt-get install libssl-dev libffi-dev
-    pip3 wheel --no-index --find-links ./localwheels/ -w ./localwheels/ -r requirements-build.txt
-    ls ./localwheels/
-    asn1crypto-0.24.0-py3-none-any.whl
-    certifi-2018.8.24-py2.py3-none-any.whl
-    cffi-1.11.5-cp35-cp35m-linux_x86_64.whl
-    chardet-3.0.4-py2.py3-none-any.whl
-    cryptography-2.3.1-cp35-cp35m-linux_x86_64.whl
-    idna-2.7-py2.py3-none-any.whl
-    pycparser-2.19-py2.py3-none-any.whl
-    requests-2.19.1-py2.py3-none-any.whl
-    six-1.11.0-py2.py3-none-any.whl
-    urllib3-1.23-py2.py3-none-any.whl
-
-
-Create the requirements.txt file for our wheels
-------------------------------------------------
-
-As the next step, we will create the final ``requirements.txt`` file which will contain the details
-of the wheels including the hashes.
-
-::
-
-    computepipfilehash --wheel-hashes > requirements.txt
-
-
-Sync the local wheels into a central storage
-----------------------------------------------
-
-
-.. note:: Here we will have to figure out the steps to move the wheels to a central location.
+    pipenv lock -r > requirements.txt
 
 
 
@@ -120,21 +31,33 @@ Then, we will create a new source tarball for our project and also copy the whee
 
 
     python3 setup.py sdist
-    cp dist/whosaysthat-0.0.2.tar.gz ~/packaging/
-    cd ~/packaging/
-    tar -xvf whosaysthat-0.0.2.tar.gz
-    cd whosaysthat-0.0.2/
-    cp -r ~/code/whosaysthat/localwheels .
+    realpath dist/whosaysthat-0.0.2.tar.gz
+    /home/user/code/whosaysthat/dist/whosaysthat-0.0.2.tar.gz
 
 
-Now, we will create the files required for our packaging manually, including the
-``debian`` directory. We will also install ``dh-virtualenv`` package.
+Check out our debian packaging repo
+====================================
 
 ::
 
-    $ mkdir debian
-    $ sudo apt-get install dh-virtualenv
+    git clone https://github.com/freedomofpress/securedrop-debian-packaging
 
+
+Now, we will install all required dependencies and will also syncs the wheels locally.
+
+::
+
+    $ make install-deps
+    $ make syncwheels
+
+
+
+Create a project directory
+---------------------------
+
+::
+
+    mkdir -p whosaysthat/debian
 
 Create the compatibility file
 ------------------------------
@@ -251,7 +174,7 @@ Add the following text to the ``debian/rules`` file.
     #!/usr/bin/make -f
 
     %:
-            dh $@ --with python-virtualenv --python /usr/bin/python3.5 --setuptools
+            dh $@ --with python-virtualenv --python /usr/bin/python3.5 --setuptools --index-url https://dev-bin.ops.securedrop.org/simple
 
 .. note:: If you copy paste the above example, then remember to use a TAB instead of 8 spaces :)
 
@@ -267,7 +190,7 @@ Python modules from Debian world, the above will need modification.
         dh $@ --with python-virtualenv
 
     override_dh_virtualenv:
-        dh_virtualenv --python /usr/bin/python3.5 --setuptools -S
+        dh_virtualenv --python /usr/bin/python3.5 --setuptools -S --index-url https://dev-bin.ops.securedrop.org/simple
 
 
 
@@ -276,6 +199,15 @@ Let us build the package
 
 ::
 
-    $ dpkg-buildpackage -us -uc
+    $ PKG_PATH=/home/user/code/whosaysthat/dist/whosaysthat-0.0.2.tar.gz PKG_VERSION=0.0.2 PKG_NAME=whosaysthat ./scripts/build-debianpackage
 
-This should create the Debian package in the parent directory.
+This should create the Debian package in the ``~/debbuild/whosaysthat`` directory.
+
+
+For the official projects, we already have makefile targets.
+
+::
+
+    PKG_PATH=/home/user/code/securedrop-client/dist/securedrop-client-0.0.1.tar.gz PKG_VERSION=0.0.1 make securedrop-client
+
+
